@@ -406,41 +406,14 @@ public class ConnectedPlaneChiselingMode extends AbstractCustomRegistryEntry imp
                 validPositions.add(targetedPosition);
 
                 offsets.forEach(offset -> {
-                    final Vec3i newTarget = new Vec3i(
-                      targetedPosition.getX() + offset.getX(),
-                      targetedPosition.getY() + offset.getY(),
-                      targetedPosition.getZ() + offset.getZ()
+                    processOffsetsIntoContext(
+                      blockRayTraceResult,
+                      offset,
+                      targetedPosition,
+                      relevantSelectedAxisVector,
+                      processed,
+                      toProcess
                     );
-                    if (newTarget.getX() >= 0 && newTarget.getX() < StateEntrySize.current().getBitsPerBlockSide() &&
-                          newTarget.getY() >= 0 && newTarget.getY() < StateEntrySize.current().getBitsPerBlockSide() &&
-                          newTarget.getZ() >= 0 && newTarget.getZ() < StateEntrySize.current().getBitsPerBlockSide())
-                    {
-
-                        final Vec3i relevantNewTargetAxisVector =
-                          new Vec3i(
-                            newTarget.getX() * Math.abs(blockRayTraceResult.getDirection().getNormal().getX()),
-                            newTarget.getY() * Math.abs(blockRayTraceResult.getDirection().getNormal().getY()),
-                            newTarget.getZ() * Math.abs(blockRayTraceResult.getDirection().getNormal().getZ())
-                          );
-
-                        final int targetedDepth = Math.abs(
-                          relevantSelectedAxisVector.get(blockRayTraceResult.getDirection().getAxis()) -
-                            relevantNewTargetAxisVector.get(blockRayTraceResult.getDirection().getAxis())
-                        );
-
-                        if (targetedDepth <= depth - 1)
-                        {
-                            //Valid offset found
-                            if (!processed.contains(newTarget) && !toProcess.contains(newTarget))
-                            {
-                                toProcess.addLast(newTarget);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        processed.add(newTarget);
-                    }
                 });
             }
         }
@@ -454,6 +427,50 @@ public class ConnectedPlaneChiselingMode extends AbstractCustomRegistryEntry imp
         context.setMetadata(ModMetadataKeys.TARGETED_BLOCK.get(), hitPos);
 
         return Optional.empty();
+    }
+
+    private void processOffsetsIntoContext(
+      final BlockHitResult blockRayTraceResult,
+      final Vec3i offset,
+      final Vec3i targetedPosition,
+      final Vec3i relevantSelectedAxisVector,
+      final Set<Vec3i> processed,
+      final Deque<Vec3i> toProcess
+    )
+    {
+        final Vec3i newTarget = new Vec3i(
+          targetedPosition.getX() + offset.getX(),
+          targetedPosition.getY() + offset.getY(),
+          targetedPosition.getZ() + offset.getZ()
+        );
+        if (newTarget.getX() >= 0 && newTarget.getX() < StateEntrySize.current().getBitsPerBlockSide() &&
+              newTarget.getY() >= 0 && newTarget.getY() < StateEntrySize.current().getBitsPerBlockSide() &&
+              newTarget.getZ() >= 0 && newTarget.getZ() < StateEntrySize.current().getBitsPerBlockSide())
+        {
+            final Vec3i relevantNewTargetAxisVector =
+              new Vec3i(
+                newTarget.getX() * Math.abs(blockRayTraceResult.getDirection().getNormal().getX()),
+                newTarget.getY() * Math.abs(blockRayTraceResult.getDirection().getNormal().getY()),
+                newTarget.getZ() * Math.abs(blockRayTraceResult.getDirection().getNormal().getZ())
+              );
+
+            final int targetedDepth = Math.abs(
+              relevantSelectedAxisVector.get(blockRayTraceResult.getDirection().getAxis()) -
+                relevantNewTargetAxisVector.get(blockRayTraceResult.getDirection().getAxis())
+            );
+
+            if (targetedDepth <= depth - 1)
+            {
+                if (!processed.contains(newTarget) && !toProcess.contains(newTarget))
+                {
+                    toProcess.addLast(newTarget);
+                }
+            }
+        }
+        else
+        {
+            processed.add(newTarget);
+        }
     }
 
     @Override
