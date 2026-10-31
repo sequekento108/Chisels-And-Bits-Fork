@@ -2,31 +2,31 @@ modLoader = "javafml"
 loaderVersion = "[4,)"
 license = "$project.license"
 
-[[mods]] #mandatory
+[[mods]]
 modId = "$project.mod.id"
 version = "$version"
-displayName = "$name"
+displayName = "Chisels and Bits"
 authors = "$project.author"
 logoFile = "logo-forge.png"
 description = '''
 $project.description
 '''
-updateJSONURL="https://curseupdate.com/$project.curse.id.neoforge/$project.mod.id?ml=neoforge" #optional
+updateJSONURL="https://curseupdate.com/$project.curse.id.neoforge/$project.mod.id?ml=neoforge"
 [[dependencies.$project.mod.id]]
-modId = "neoforge" #mandatory
-required = true #mandatory
+modId = "neoforge"
+required = true
 versionRange = "$dependencies.net.neoforged.neoforge.maven"
 ordering = "AFTER"
 side = "BOTH"
 [[dependencies.$project.mod.id]]
-modId = "minecraft" #mandatory
-required = true #mandatory
+modId = "minecraft"
+required = true
 versionRange = "${minecraft.range.neoforge.get()}"
 ordering = "AFTER"
 side = "BOTH"
 [[dependencies.$project.mod.id]]
-modId = "scena" #mandatory
-required = true #mandatory
+modId = "scena"
+required = true
 versionRange = "$dependencies.com.communi_suggestu.scena.neoforge.maven"
 ordering = "AFTER"
 side = "BOTH"

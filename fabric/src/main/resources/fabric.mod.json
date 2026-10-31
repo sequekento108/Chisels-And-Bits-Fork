@@ -3,7 +3,7 @@
   "id": "$project.mod.id",
   "version": "$version",
 
-  "name": "$name",
+  "name": "Chisels and Bits",
   "description": "$project.description",
   "authors": [
     "$project.author"
